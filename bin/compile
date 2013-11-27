@@ -73,13 +73,21 @@ for filename in `find . -name pubspec.yaml | grep -v dart-sdk | grep -v pub-cach
     message "*** Found pubspec.yaml in $pub_dir"
     cd $BUILD_DIR/$pub_dir
 
+    TMP_PUB_CACHE=$PUB_CACHE
+    export TMP_PUB_CACHE
+
     #start pub from the /app folder to have correct symlink paths
     /app/dart-sdk/bin/pub get
-done
 
-# move packages from cache directory into build directory
-cd $CACHE_DIR
-cp -r $CACHE_DIR/pub-cache $BUILD_DIR/$PACKAGES_DIR
+    # move packages from cache directory into build directory
+    cp -r $CACHE_DIR/pub-cache $BUILD_DIR/$PACKAGES_DIR
+
+    # good links
+    PUB_CACHE="/app/$PACKAGES_DIR/pub-cache"
+    /app/dart-sdk/bin/pub get
+    PUB_CACHE=$TMP_PUB_CACHE
+    export PUB_CACHE
+done
 
 # run Dart build script
 cd $BUILD_DIR
